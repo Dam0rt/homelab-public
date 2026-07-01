@@ -1,0 +1,7 @@
+.DS_Store
+
+# Secrets & données runtime des stacks Docker Compose — NE JAMAIS committer
+.env
+**/prometheus_data/
+**/grafana_data/
+**/loki-data/

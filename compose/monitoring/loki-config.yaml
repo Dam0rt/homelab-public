@@ -1,0 +1,44 @@
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+
+common:
+  path_prefix: /loki/data
+  storage:
+    filesystem:
+      chunks_directory: /loki/data/chunks
+      rules_directory: /loki/data/rules
+  replication_factor: 1
+  ring:
+    instance_addr: 127.0.0.1
+    kvstore:
+      store: inmemory
+
+schema_config:
+  configs:
+    - from: "2024-01-01"
+      store: tsdb
+      object_store: filesystem
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+# Limites & rétention
+limits_config:
+  retention_period: 30d              # Conservation des logs : 30 jours
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h   # Rejette les logs de plus de 7 jours
+  # Garde-fous pour éviter un crash si un conteneur s'emballe
+  ingestion_rate_mb: 15
+  ingestion_burst_size_mb: 30
+
+# Compactor : purge des vieux logs
+compactor:
+  working_directory: /loki/data/compactor
+  delete_request_store: filesystem
+  retention_enabled: true            # Active la suppression effective
+  compaction_interval: 10m           # Vérifie le ménage toutes les 10 min
+  retention_delete_delay: 2h
+  retention_delete_worker_count: 150

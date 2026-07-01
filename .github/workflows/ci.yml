@@ -1,0 +1,72 @@
+name: CI
+
+# Valide l'infra-as-code et la documentation à chaque push / PR.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  compose-validate:
+    name: Valider les docker-compose
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rendu + validation de chaque stack
+        run: |
+          set -e
+          # Valeurs factices : on vérifie la syntaxe et l'interpolation,
+          # pas une vraie connexion (les secrets restent dans .env, hors repo).
+          export UNPOLLER_URL=https://example.invalid
+          export UNPOLLER_USER=ci
+          export UNPOLLER_PASS=ci
+          shopt -s nullglob
+          for f in compose/*/docker-compose.yml; do
+            echo "::group::$f"
+            ( cd "$(dirname "$f")" && docker compose config -q )
+            echo "OK  $f"
+            echo "::endgroup::"
+          done
+
+  markdown-links:
+    name: Vérifier les liens internes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Markdown link check (liens relatifs)
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: 'yes'
+          config-file: .github/mlc_config.json
+
+  secret-scan:
+    name: Pas de secret en clair
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Aucun fichier .env versionné
+        run: |
+          if git ls-files | grep -E '(^|/)\.env$'; then
+            echo "::error:: un fichier .env est versionné — les secrets ne doivent jamais être commités"
+            exit 1
+          fi
+          echo "OK — aucun .env versionné (seul .env.example est autorisé)"
+
+      - name: Aucun secret en clair dans les stacks compose
+        run: |
+          fail=0
+          for f in $(find compose -type f \( -name '*.yml' -o -name '*.yaml' \)); do
+            hits=$(grep -nEi '(password|passwd|secret|token|api[_-]?key|_pass)[[:space:]]*[:=]' "$f" \
+              | grep -viE '\$\{|<your|change[_-]?me|example|placeholder|read.?only|lecture seule|[:=][[:space:]]*$' \
+              || true)
+            if [ -n "$hits" ]; then
+              echo "::error file=$f:: secret potentiellement en clair (utilise une variable \${...} + .env) :"
+              echo "$hits"
+              fail=1
+            fi
+          done
+          if [ "$fail" -eq 0 ]; then echo "OK — aucun secret en clair détecté"; fi
+          exit $fail

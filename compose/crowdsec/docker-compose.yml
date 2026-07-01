@@ -1,0 +1,63 @@
+# CrowdSec — IPS comportemental, déployé sur titanium (Unraid).
+#
+# Pipeline : le moteur analyse les logs (SSH, syslog, reverse proxy Zoraxy) →
+# détecte les comportements malveillants → le bouncer Cloudflare bannit les IP
+# AU BORD (avant qu'elles n'atteignent l'origine). Un dashboard Metabase visualise
+# les décisions.
+#
+# ATTENTION : le jeton API Cloudflare du bouncer vit dans la config CrowdSec montée
+# (/etc/crowdsec, hors de ce dépôt) — jamais dans ce compose.
+
+services:
+  # Moteur CrowdSec — parse les logs et prend les décisions (LAPI)
+  crowdsec:
+    image: crowdsecurity/crowdsec
+    container_name: crowdsec
+    restart: unless-stopped
+    ports:
+      - 8081:8080      # API locale (LAPI)
+      - 6060:6060      # métriques Prometheus
+    environment:
+      COLLECTIONS: crowdsecurity/linux crowdsecurity/nginx crowdsecurity/http-cve
+      PUID: "99"
+      PGID: "98"
+    volumes:
+      - /mnt/cache/appdata/crowdsec/data/:/var/lib/crowdsec/data
+      - /mnt/cache/appdata/crowdsec/:/etc/crowdsec
+      - /mnt/cache/dmz/crowdsec/auth/:/var/log/auth.log        # SSH (brute-force)
+      - /mnt/cache/dmz/crowdsec/:/var/log/crowdsec
+      - /var/log/syslog:/syslog:ro
+      - /mnt/cache/appdata/zoraxy/log/:/var/log/zoraxy:ro      # reverse proxy (services exposés)
+
+  # Bouncer Cloudflare — synchronise les bans vers une liste Cloudflare (blocage au bord)
+  crowdsec-cloudflare-bouncer:
+    image: crowdsecurity/cloudflare-bouncer:latest
+    container_name: crowdsec-cloudflare-bouncer
+    restart: unless-stopped
+    depends_on:
+      - crowdsec
+    ports:
+      - 2112:2112      # métriques du bouncer
+    environment:
+      PUID: "99"
+      PGID: "100"
+      UMASK: "022"
+    volumes:
+      - /mnt/cache/appdata/crowdsec/:/etc/crowdsec
+
+  # Dashboard Metabase — visualisation des décisions / alertes
+  crowdsec-dashboard:
+    image: metabase/metabase:latest
+    container_name: crowdsec-dashboard
+    restart: unless-stopped
+    depends_on:
+      - crowdsec
+    ports:
+      - 3000:3000
+    environment:
+      MUID: "99"
+      MGID: "98"
+      MB_DB_FILE: /data/metabase.db
+    volumes:
+      - /mnt/cache/appdata/crowdsec/data/:/metabase-data/
+      - /mnt/cache/appdata/crowdsec/dashboard/:/data/
