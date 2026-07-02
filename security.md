@@ -35,11 +35,22 @@ Les quelques services publics passent par **Cloudflare** (Tunnel, aucun port ouv
 
 ## Audit du pare-feu
 
-Revue de l'ensemble des règles (zones, matrice inter-zones, politiques) contre une grille de bonnes pratiques : segmentation, exposition, moindre privilège.
+Revue de l'ensemble des règles (zones, matrice inter-zones, politiques) contre une grille de bonnes pratiques : segmentation, exposition, moindre privilège, hygiène des règles.
 
-- Score : **~89/100 (healthy)** après corrections.
-- Quelques **faux positifs** écartés au passage — une règle signalée « manquante » mais en réalité couverte par une règle prédéfinie ou par la matrice de zones.
-- Principal écart corrigé : le réseau de **management** n'était pas restreint aux seules sources admin → fermé (whitelist).
+**Comment le score est obtenu :**
+
+1. **Export en lecture seule de la configuration live** du contrôleur : règles, zones, groupes d'adresses, redirections NAT.
+2. **Passage sur une grille de contrôle** par familles — segmentation (isolation des VLANs sensibles : IoT, invités, caméras), exposition Internet (redirections NAT, règles WAN entrantes), moindre privilège (règles trop larges type « ANY → ANY »), hygiène (règles mortes, doublons, objets orphelins).
+3. Chaque écart retire des points selon sa criticité (critique / important / mineur), en partant de 100.
+4. **Contre-vérification manuelle de chaque écart signalé** : plusieurs « manques » remontés par l'audit outillé étaient en réalité couverts par une règle prédéfinie ou par la matrice de zones → écartés comme faux positifs après vérification, pas ignorés.
+
+L'audit est **outillé** (analyse assistée par IA de l'export de configuration) puis **arbitré à la main** — l'outil trouve vite, l'humain tranche.
+
+**Résultat sur trois passes : 74/100 au premier audit → ~89/100 (healthy)** après corrections. Principaux écarts corrigés au fil des passes :
+
+- Le réseau de **management** n'était pas restreint aux seules sources admin → fermé (whitelist).
+- Surface entrante réduite à **un seul port** (fermeture du port 80, suppression d'une redirection de jeu obsolète).
+- **Forçage DNS** (impossible de contourner le résolveur filtrant) et nettoyage des règles mortes.
 
 ## Modèle de menace
 

@@ -7,7 +7,10 @@
 >
 > Je le documente surtout pour **m'y retrouver moi-même** — de tête, ça ne tient pas. Et je le partage au cas où ça dépanne quelqu'un.
 
-> ⚠️ Version **publique expurgée** : IP publique, adresses MAC, nom de domaine et éléments sensibles (caméras, secrets) ont été retirés ou rendus génériques.
+> [!IMPORTANT]
+> Version **publique expurgée** : IP publique, adresses MAC, nom de domaine et éléments sensibles (caméras, secrets) ont été retirés ou rendus génériques.
+
+<br>
 
 ---
 
@@ -19,11 +22,13 @@ Trois hôtes, un réseau segmenté en VLANs derrière un pare-feu *zone-based*, 
 
 *Topologie physique — du lien fibre aux postes, serveurs et caméras (vue isométrique). Le détail logique est en [Mermaid](schemas.md).*
 
+<br>
+
 | Brique | Détail |
 |---|---|
 | **Hôtes** | `titanium` (Unraid — NAS + Docker + VM) · `uranium` (Proxmox — VM/LXC) · `helium` (Raspberry Pi 4 — supervision) |
 | **Réseau** | Box FAI → UDM Pro (UniFi) · une dizaine de VLANs actifs · pare-feu *zone-based* (8 zones) |
-| **Sécurité** | DNS filtrant (AdGuard + unbound) · reverse proxy en DMZ (Zoraxy) + certificats wildcard Let's Encrypt · **IDS/IPS (UDM Pro)** · **CrowdSec** · WireGuard · Cloudflare Tunnel |
+| **Sécurité** | DNS filtrant (AdGuard + unbound) · reverse proxy en DMZ (Zoraxy) + certificats wildcard Let's Encrypt · **IDS/IPS (UDM Pro)** · **CrowdSec** · WireGuard · Cloudflare Tunnel · pare-feu **audité ~89/100** ([méthode](security.md#audit-du-pare-feu)) |
 | **Services** | Vaultwarden, Home Assistant, Jellyfin, WordPress, PeerTube, n8n, GLPI, AdGuard… |
 | **Sauvegarde** | 3-2-1 : parité Unraid + appdata en local · offsite chiffré (restic → cloud souverain UE) · restauration testée |
 | **Supervision** | Prometheus + Grafana + Loki · Uptime Kuma + alerting |
@@ -59,7 +64,7 @@ Trois hôtes, un réseau segmenté en VLANs derrière un pare-feu *zone-based*, 
 
 ## 💡 Pourquoi ces choix
 
-Je bidouille ce lab pour apprendre, alors j'aime bien comprendre *pourquoi* je fais un truc plutôt que de suivre une recette. Quelques exemples :
+Ce lab est mon terrain d'apprentissage, et j'ai une règle : comprendre *pourquoi* je fais un choix plutôt que d'appliquer une recette. Quelques exemples :
 
 - **Pare-feu par zones** plutôt que des règles à plat : avec des règles en vrac, je finissais par ne plus m'y retrouver. Par zones, je relis ma conf sans me prendre la tête.
 - **Sauvegarde hors-site chez un hébergeur européen** plutôt qu'un géant américain — je préfère savoir où vivent mes données. Et comme restic chiffre côté client, le prestataire ne voit que des blocs illisibles de toute façon.
