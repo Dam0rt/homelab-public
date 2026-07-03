@@ -44,12 +44,12 @@ Revue de l'ensemble des règles (zones, matrice inter-zones, politiques) contre 
 3. Chaque écart retire des points selon sa criticité (critique / important / mineur), en partant de 100.
 4. **Contre-vérification manuelle de chaque écart signalé** : plusieurs « manques » remontés par l'audit outillé étaient en réalité couverts par une règle prédéfinie ou par la matrice de zones → écartés comme faux positifs après vérification, pas ignorés.
 
-L'audit est **outillé** (analyse assistée par IA de l'export de configuration) puis **arbitré à la main** — l'outil trouve vite, l'humain tranche.
+L'audit est **outillé** (analyse assistée par IA de l'export de configuration) puis **arbitré à la main**
 
 **Résultat sur trois passes : 74/100 au premier audit → ~89/100 (healthy)** après corrections. Principaux écarts corrigés au fil des passes :
 
 - Le réseau de **management** n'était pas restreint aux seules sources admin → fermé (whitelist).
-- Surface entrante réduite à **un seul port** (fermeture du port 80, suppression d'une redirection de jeu obsolète).
+- Surface entrante réduite à **un seul port** (fermeture du port 80, suppression d'une redirection d'un serveur de jeu obsolète).
 - **Forçage DNS** (impossible de contourner le résolveur filtrant) et nettoyage des règles mortes.
 
 ## Modèle de menace
