@@ -1,9 +1,9 @@
 # CrowdSec : IPS comportemental, déployé sur titanium (Unraid).
 #
 # Pipeline : le moteur analyse les logs (SSH, syslog, reverse proxy Zoraxy) et
-# détecte les comportements malveillants, puis le bouncer Cloudflare bannit les IP
-# AU BORD (avant qu'elles n'atteignent l'origine). Un dashboard Metabase visualise
-# les décisions.
+# détecte les comportements malveillants, puis le bouncer bannit les IP directement
+# chez Cloudflare, avant qu'elles n'atteignent l'origine. Un dashboard Metabase
+# visualise les décisions.
 #
 # ATTENTION : le jeton API Cloudflare du bouncer vit dans la config CrowdSec montée
 # (/etc/crowdsec, hors de ce dépôt), jamais dans ce compose.
@@ -29,7 +29,7 @@ services:
       - /var/log/syslog:/syslog:ro
       - /mnt/cache/appdata/zoraxy/log/:/var/log/zoraxy:ro      # reverse proxy (services exposés)
 
-  # Bouncer Cloudflare : synchronise les bans vers une liste Cloudflare (blocage au bord)
+  # Bouncer Cloudflare : synchronise les bans vers une liste Cloudflare, en amont du tunnel
   crowdsec-cloudflare-bouncer:
     image: crowdsecurity/cloudflare-bouncer:latest
     container_name: crowdsec-cloudflare-bouncer
