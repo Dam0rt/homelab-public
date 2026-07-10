@@ -13,12 +13,12 @@ scrape_configs:
     static_configs:
       - targets: ['node-exporter:9100']
 
-  # Hôte Unraid (titanium) : remplace par l'IP/nom de ton hôte
+  # Hôte Unraid (titanium). Cible à adapter : IP ou nom d'hôte.
   - job_name: 'unraid-server'
     static_configs:
       - targets: ['unraid-host:9100']
 
-  # Hôte Proxmox (uranium) via l'exporter PVE : remplace par tes hôtes
+  # Hôte Proxmox (uranium) via l'exporter PVE. Cibles à adapter.
   - job_name: 'proxmox-server'
     metrics_path: /pve
     static_configs:

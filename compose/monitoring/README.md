@@ -26,7 +26,7 @@ Les identifiants Unpoller ne sont pas dans le `docker-compose.yml` : ils viennen
 
 ```bash
 cp .env.example .env
-# renseigne un utilisateur UniFi READ-ONLY dédié dans .env
+# puis compléter .env avec un utilisateur UniFi read-only dédié
 ```
 
 ## Déploiement
