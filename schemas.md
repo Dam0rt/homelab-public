@@ -1,19 +1,19 @@
 # 🗺️ Schémas
 
-Diagrammes **Mermaid** (rendu natif sur GitHub) — la vue **logique** de l'infra. Des versions **isométriques** (FossFLOW) illustrent les pages dédiées.
+Diagrammes Mermaid (rendu natif sur GitHub) : la vue logique de l'infra. Des versions isométriques (FossFLOW) illustrent les pages dédiées.
 
 ## 1. Topologie physique
 
 ```mermaid
 graph TD
-    INET["🌐 Internet — fibre, IP publique fixe"]
-    BOX["📦 Box FAI — mode DMZ"]
-    UDM["🛡️ UDM Pro — pare-feu / contrôleur"]
+    INET["🌐 Internet (fibre, IP publique fixe)"]
+    BOX["📦 Box FAI (mode DMZ)"]
+    UDM["🛡️ UDM Pro (pare-feu / contrôleur)"]
     SW["🔀 Switch 16 PoE"]
     AP["📶 Point d'accès WiFi"]
-    TIT["🗄️ titanium — Unraid (NAS + Docker + VM)"]
-    URA["🖥️ uranium — Proxmox (VM/LXC)"]
-    HEL["🍓 helium — Pi4 (supervision)"]
+    TIT["🗄️ titanium : Unraid (NAS + Docker + VM)"]
+    URA["🖥️ uranium : Proxmox (VM/LXC)"]
+    HEL["🍓 helium : Pi4 (supervision)"]
     CAM["📹 Caméras (CCTV)"]
     CLI["💻 Postes & clients WiFi"]
 
@@ -33,11 +33,11 @@ graph TD
 ```mermaid
 graph LR
     EXT["🌐 Internet"]
-    INT["🔐 Internal — MNGT · USERS · SRVR · CTNR · DNS · LABS · VOIP"]
-    IOT["🔌 IoT — objets · multimédia · caméras"]
+    INT["🔐 Internal : MNGT, USERS, SRVR, CTNR, DNS, LABS, VOIP"]
+    IOT["🔌 IoT : objets, multimédia, caméras"]
     GUEST["👥 Invité"]
-    DMZ["🟠 DMZ — reverse proxy"]
-    VPN["🔑 VPN — WireGuard"]
+    DMZ["🟠 DMZ (reverse proxy)"]
+    VPN["🔑 VPN (WireGuard)"]
     SUP["📊 Supervision"]
 
     INT -->|autorisé| EXT
@@ -55,10 +55,10 @@ graph LR
 
 ```mermaid
 flowchart TD
-    V["👤 Visiteur Internet"] --> CF["☁️ Cloudflare — WAF + CrowdSec + Tunnel"]
+    V["👤 Visiteur Internet"] --> CF["☁️ Cloudflare (WAF + CrowdSec + Tunnel)"]
     TUN["cloudflared (sortant)"] -. tunnel .-> CF
     CF --> ZX["🔀 Reverse proxy (DMZ)"]
-    ZX --> PUB["🌍 Services publics — blog · vidéos · demandes média"]
+    ZX --> PUB["🌍 Services publics : blog, vidéos, demandes média"]
     ZX -. split-DNS interne .-> LAN["🏠 Accès interne direct"]
 ```
 
@@ -66,13 +66,13 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    SRC["📦 Sources — configs · VM · données"]
-    HUB[("💽 NAS — copie locale + parité")]
-    OFF[("☁️ Cloud souverain UE — offsite chiffré")]
+    SRC["📦 Sources : configs, VM, données"]
+    HUB[("💽 NAS : copie locale + parité")]
+    OFF[("☁️ Cloud souverain UE : offsite chiffré")]
     SRC --> HUB
     HUB ==>|restic : chiffre + déduplique| OFF
 ```
 
 ---
 
-*Détails : [réseau](network.md) · [segmentation VLAN](vlans.md) · [sauvegarde](backup.md).*
+Le détail de chaque brique : [réseau](network.md), [segmentation VLAN](vlans.md), [sauvegarde](backup.md).

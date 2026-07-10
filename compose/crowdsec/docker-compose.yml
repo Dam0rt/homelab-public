@@ -1,15 +1,15 @@
-# CrowdSec — IPS comportemental, déployé sur titanium (Unraid).
+# CrowdSec : IPS comportemental, déployé sur titanium (Unraid).
 #
-# Pipeline : le moteur analyse les logs (SSH, syslog, reverse proxy Zoraxy) →
-# détecte les comportements malveillants → le bouncer Cloudflare bannit les IP
+# Pipeline : le moteur analyse les logs (SSH, syslog, reverse proxy Zoraxy) et
+# détecte les comportements malveillants, puis le bouncer Cloudflare bannit les IP
 # AU BORD (avant qu'elles n'atteignent l'origine). Un dashboard Metabase visualise
 # les décisions.
 #
 # ATTENTION : le jeton API Cloudflare du bouncer vit dans la config CrowdSec montée
-# (/etc/crowdsec, hors de ce dépôt) — jamais dans ce compose.
+# (/etc/crowdsec, hors de ce dépôt), jamais dans ce compose.
 
 services:
-  # Moteur CrowdSec — parse les logs et prend les décisions (LAPI)
+  # Moteur CrowdSec : parse les logs et prend les décisions (LAPI)
   crowdsec:
     image: crowdsecurity/crowdsec
     container_name: crowdsec
@@ -29,7 +29,7 @@ services:
       - /var/log/syslog:/syslog:ro
       - /mnt/cache/appdata/zoraxy/log/:/var/log/zoraxy:ro      # reverse proxy (services exposés)
 
-  # Bouncer Cloudflare — synchronise les bans vers une liste Cloudflare (blocage au bord)
+  # Bouncer Cloudflare : synchronise les bans vers une liste Cloudflare (blocage au bord)
   crowdsec-cloudflare-bouncer:
     image: crowdsecurity/cloudflare-bouncer:latest
     container_name: crowdsec-cloudflare-bouncer
@@ -45,7 +45,7 @@ services:
     volumes:
       - /mnt/cache/appdata/crowdsec/:/etc/crowdsec
 
-  # Dashboard Metabase — visualisation des décisions / alertes
+  # Dashboard Metabase : visualisation des décisions / alertes
   crowdsec-dashboard:
     image: metabase/metabase:latest
     container_name: crowdsec-dashboard

@@ -50,10 +50,10 @@ jobs:
       - name: Aucun fichier .env versionné
         run: |
           if git ls-files | grep -E '(^|/)\.env$'; then
-            echo "::error:: un fichier .env est versionné — les secrets ne doivent jamais être commités"
+            echo "::error:: un fichier .env est versionné : les secrets ne doivent jamais être commités"
             exit 1
           fi
-          echo "OK — aucun .env versionné (seul .env.example est autorisé)"
+          echo "OK : aucun .env versionné (seul .env.example est autorisé)"
 
       - name: Aucun secret en clair dans les stacks compose
         run: |
@@ -68,5 +68,5 @@ jobs:
               fail=1
             fi
           done
-          if [ "$fail" -eq 0 ]; then echo "OK — aucun secret en clair détecté"; fi
+          if [ "$fail" -eq 0 ]; then echo "OK : aucun secret en clair détecté"; fi
           exit $fail
