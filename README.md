@@ -25,7 +25,7 @@
 | Brique | Détail |
 |---|---|
 | **Hôtes** | `titanium` (Unraid : NAS + Docker + VM), `uranium` (Proxmox : VM/LXC), `helium` (Raspberry Pi 4 : supervision) |
-| **Réseau** | Box FAI → UDM Pro (UniFi), une dizaine de VLANs actifs, pare-feu *zone-based* (8 zones) |
+| **Réseau** | Box FAI → UDM Pro (UniFi), 14 VLAN, pare-feu *zone-based* (9 zones) |
 | **Sécurité** | DNS filtrant (AdGuard + unbound), reverse proxy en DMZ (Zoraxy) avec certificats wildcard Let's Encrypt, IDS/IPS (UDM Pro), CrowdSec, WireGuard, Cloudflare Tunnel, pare-feu audité ~89/100 ([méthode](security.md#audit-du-pare-feu)) |
 | **Services** | Vaultwarden, Home Assistant, Jellyfin, WordPress, PeerTube, n8n, GLPI, AdGuard… |
 | **Sauvegarde** | 3-2-1 : parité Unraid + appdata en local, offsite chiffré (restic → cloud souverain UE), restauration testée |

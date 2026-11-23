@@ -22,6 +22,7 @@ Le réseau est segmenté par catégorie d'équipement (un VLAN chacun) derrière
 | 110 | CTNR | `x.x.110.0/24` | Conteneurs / apps |
 | 200 | DMZ | `x.x.200.0/24` | Zone exposée (reverse proxy) |
 | 210 | TNL | `x.x.210.0/29` | Tunnel sortant (Cloudflare) |
+| 220 | GAME | `x.x.220.0/29` | Serveurs de jeu (VM isolée) |
 | 240 | VPN | `x.x.240.0/29` | Accès distant (WireGuard) |
 
 *(Octets de tête masqués : plan privé RFC1918, montré pour illustrer la segmentation.)*
@@ -32,9 +33,9 @@ Le réseau est segmenté par catégorie d'équipement (un VLAN chacun) derrière
 
 Les VLANs sont regroupés en zones, et c'est entre zones que se jouent les autorisations :
 
-![Carte isométrique des 7 zones de confiance et de leurs VLANs](images/segmentation-zones.png)
+![Carte isométrique des zones de confiance et de leurs VLANs](images/segmentation-zones.png)
 
-*Les 7 zones de confiance et la répartition des VLANs. La matrice des flux autorisés / bloqués entre zones est détaillée en [Mermaid](schemas.md).*
+*Les zones de confiance et la répartition des VLANs (la carte ne montre pas encore la zone GAME). La matrice des flux autorisés / bloqués entre zones est détaillée en [Mermaid](schemas.md).*
 
 | Zone | VLANs | Politique |
 |---|---|---|
@@ -45,6 +46,7 @@ Les VLANs sont regroupés en zones, et c'est entre zones que se jouent les autor
 | **SUP** | SUP | supervision : accès ciblé (scrape métriques) vers les hôtes |
 | **VPN** | VPN | accès admin distant chiffré vers Internal |
 | **External** | Internet | tout le reste |
+| **GAME** | GAME | serveurs de jeu : isolés de toutes les autres zones |
 | **Gateway** | *(interfaces passerelle)* | zone système de l'UDM, pas de VLAN utilisateur |
 
 ## Principes de segmentation (le « pourquoi »)
